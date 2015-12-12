@@ -1,0 +1,140 @@
+@import 'normalize';
+@import 'mixins';
+@import 'vars';
+
+body {
+  background-color: $bg-color;
+}
+
+button {
+  border: none;
+  appearance: none;
+  &:focus {
+    outline: none;
+  }
+}
+
+.container {
+  width: 960px;
+  margin: 0 auto;
+}
+
+.blacklist {
+  background-color: #DCDCDC;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.title {
+  color: #fff;
+  margin: 0;
+  padding: 15px;
+}
+
+.blacklist__words {
+  padding: 10px;
+}
+
+.blacklist__word {
+  position: relative;
+  display: inline-block;
+  font-size: 13px;
+  color: #525252;
+  background-color: #a2a4a3;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+  &:hover {
+    .blacklist__remove-icon {
+      display: block;
+    }
+  }
+}
+
+.blacklist__remove-icon {
+  display: none;
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 13px;
+  height: 13px;
+  color: #fff;
+  font-size: 9px;
+  line-height: 12px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: tomato;
+}
+
+.animated {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale3d(.3, .3, .3);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.zoomIn {
+  animation-name: zoomIn;
+}
+
+@keyframes zoomOut {
+  from {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+    transform: scale3d(.3, .3, .3);
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.zoomOut {
+  animation-name: zoomOut;
+}
+
+.review {
+  background-color: #DCDCDC;
+  margin-bottom: 30px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.review__text {
+  margin: 0;
+  padding: 20px;
+}
+
+.review__filtered-word {
+  color: #fff;
+  background-color: tomato;
+}
+
+.review__actions {
+  @extend %clearfix;
+}
+
+.review__check {
+  display: block;
+  float: left;
+}
+
+.review__remove {
+  display: block;
+  background-color: tomato;
+  color: #fff;
+  float: right;
+}
