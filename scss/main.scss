@@ -2,6 +2,10 @@
 @import 'mixins';
 @import 'vars';
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: $bg-color;
 }
@@ -9,9 +13,16 @@ body {
 button {
   border: none;
   appearance: none;
+  font-size: 12px;
+  background-color: #7E8286;
   &:focus {
     outline: none;
   }
+}
+
+h3 {
+  color: #fff;
+  margin: 0;
 }
 
 .container {
@@ -19,20 +30,30 @@ button {
   margin: 0 auto;
 }
 
+// // General section header
+
+.section-header {
+  padding: 20px;
+  & > h3 {
+    margin-bottom: 10px
+  }
+}
+
+// Blacklist section
+
 .blacklist {
   background-color: #DCDCDC;
   border-radius: 5px;
   overflow: hidden;
 }
 
-.title {
-  color: #fff;
-  margin: 0;
-  padding: 15px;
+.blacklist__add-word {
+
 }
 
 .blacklist__words {
   padding: 10px;
+  min-height: 58px;
 }
 
 .blacklist__word {
@@ -106,11 +127,52 @@ button {
   animation-name: zoomOut;
 }
 
+// Reviews section
+
 .review {
-  background-color: #DCDCDC;
-  margin-bottom: 30px;
+  position: relative;
+  margin-bottom: 40px;
   border-radius: 5px;
-  overflow: hidden;
+  background-color: #DCDCDC;
+  // overflow: hidden;
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    width: 100px;
+    height: 25px;
+    line-height: 25px;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    z-index: -1;
+    transition: all 0.3s ease-in-out;
+    // GPU hack
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: transform;
+  }
+}
+
+.review--invalid {
+  &:after {
+    content: 'not valid';
+    background-color: tomato;
+    transform: translate3d(0, -25px, 0);
+  }
+}
+
+.review--valid {
+  &:after {
+    content: 'valid';
+    background-color: #27ae60;
+    transform: translate3d(0, -25px, 0);
+  }
 }
 
 .review__text {
@@ -125,16 +187,21 @@ button {
 
 .review__actions {
   @extend %clearfix;
+  background-color: #D1D1D1;
 }
 
 .review__check {
-  display: block;
-  float: left;
+  // display: block;
+  // float: left;
 }
 
 .review__remove {
-  display: block;
+  // display: block;
+  color: #FFD3D3;
   background-color: tomato;
-  color: #fff;
-  float: right;
+  // float: left;
+}
+
+.review__edit {
+  
 }

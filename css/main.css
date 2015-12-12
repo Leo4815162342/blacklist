@@ -224,12 +224,19 @@ th {
 	clear: both;
 }
 
+* {
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 body {
-	background-color: #394249;
+	background-color: #485056;
 }
 
 button {
+	font-size: 12px;
 	border: none;
+	background-color: #7e8286;
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
@@ -239,9 +246,22 @@ button:focus {
 	outline: none;
 }
 
+h3 {
+	color: #fff;
+	margin: 0;
+}
+
 .container {
 	width: 960px;
 	margin: 0 auto;
+}
+
+.section-header {
+	padding: 20px;
+}
+
+.section-header > h3 {
+	margin-bottom: 10px;
 }
 
 .blacklist {
@@ -250,13 +270,8 @@ button:focus {
 	background-color: #dcdcdc;
 }
 
-.title {
-	color: #fff;
-	margin: 0;
-	padding: 15px;
-}
-
 .blacklist__words {
+	min-height: 58px;
 	padding: 10px;
 }
 
@@ -309,10 +324,50 @@ button:focus {
 }
 
 .review {
-	overflow: hidden;
-	margin-bottom: 30px;
+	position: relative;
+	margin-bottom: 40px;
 	border-radius: 5px;
 	background-color: #dcdcdc;
+}
+
+.review:after {
+	content: '';
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 20px;
+	z-index: -1;
+	width: 100px;
+	height: 25px;
+	color: #fff;
+	font-size: 12px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	text-align: center;
+	line-height: 25px;
+	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+	-webkit-perspective: 1000;
+	perspective: 1000;
+	will-change: transform;
+}
+
+.review--invalid:after {
+	content: 'not valid';
+	background-color: tomato;
+	-webkit-transform: translate3d(0, -25px, 0);
+	transform: translate3d(0, -25px, 0);
+}
+
+.review--valid:after {
+	content: 'valid';
+	background-color: #27ae60;
+	-webkit-transform: translate3d(0, -25px, 0);
+	transform: translate3d(0, -25px, 0);
 }
 
 .review__text {
@@ -325,15 +380,12 @@ button:focus {
 	background-color: tomato;
 }
 
-.review__check {
-	display: block;
-	float: left;
+.review__actions {
+	background-color: #d1d1d1;
 }
 
 .review__remove {
-	display: block;
-	color: #fff;
-	float: right;
+	color: #ffd3d3;
 	background-color: tomato;
 }
 

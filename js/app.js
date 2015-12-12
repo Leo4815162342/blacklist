@@ -1,31 +1,3 @@
-//events - a super-basic Javascript (publish subscribe) pattern
-
-var events = {
-  events: {},
-  on: function (eventName, fn) {
-    this.events[eventName] = this.events[eventName] || [];
-    this.events[eventName].push(fn);
-  },
-  off: function(eventName, fn) {
-    if (this.events[eventName]) {
-      for (var i = 0; i < this.events[eventName].length; i++) {
-        if (this.events[eventName][i] === fn) {
-          this.events[eventName].splice(i, 1);
-          break;
-        }
-      }
-    }
-  },
-  emit: function (eventName, data) {
-    if (this.events[eventName]) {
-      this.events[eventName].forEach(function(fn) {
-        fn(data);
-      });
-    }
-  }
-};
-
-
 var App = (function($){
   'use strict';
 
@@ -33,10 +5,12 @@ var App = (function($){
   var $blacklistContainer = $('.blacklist__words'),
       $blacklistWord = $('.blacklist__word'),
       $addWordBtn = $('.blacklist__add-word'),
-      $reviewsContainer = $('.reviews');
+      $checkAllRevBtn = $('.reviews__check-all'),
+      $addReviewBtn = $('.reviews__add'),
+      $reviewsContainer = $('.reviews__list');
 
   // Main vars
-  var blacklistWords = ['lorem', 'ipsum'],
+  var blacklistWords = ['lorem', 'ipsum', 'test', 'fuck'],
       reviews = [
         {
           text: 'Lorem, test ad asd? Asd ddddd, ss: and dolor ipsum $100 USD!',
@@ -59,7 +33,7 @@ var App = (function($){
 
   // HTML template for review block
   function reviewHtmlTpl(text) {
-    return '<div class="review"><p class="review__text">' + text + '</p><div class="review__actions"><button class="review__check">Check Review</button><button class="review__remove">Remove Review</button></div></div>';
+    return '<div class="review"><p class="review__text">' + text + '</p><div class="review__actions"><button class="review__check">check</button><button class="review__edit">edit</button><button class="review__remove">remove</button></div></div>';
   }
 
   // HTML template for filtered word
@@ -88,32 +62,21 @@ var App = (function($){
       blacklistWords.push(word);
       renderElems(word, wordHtmlTpl, $blacklistContainer);
     }
-    events.emit('wordsArrayChanged', blacklistWords);
-  }
-
-  events.on('wordsArrayChanged', fn1);
-  events.on('wordsArrayChanged', fn2);
-
-  function fn1(words) {
-    console.log(words);
-  }
-
-  function fn2(words) {
-    alert(words);
   }
 
   // Removing word from the blacklist and DOM
   function removeWord(arg) {
     var index = (typeof arg === 'number') ? arg : blacklistWords.indexOf(arg),
-        $domWords = $('.blacklist__word');
+        $currentWords = $('.blacklist__word');
     if (index !== -1) {
       blacklistWords.splice(index, 1);
-      $domWords.eq(index).addClass('zoomOut');
+      $currentWords.eq(index).addClass('zoomOut');
     }
   }
 
   // Adding and rendering review
-  function addReview (text) {
+  function addReview(e) {
+    var text = (arguments.length === 0 || e.type === 'click') ? prompt('Please enter review here') : e;
     var reviewObj = {
       text: text,
       valid: null
@@ -122,16 +85,20 @@ var App = (function($){
     renderElems(reviewObj.text, reviewHtmlTpl, $reviewsContainer);
   }
 
-  function removeReview(index) {
-    var $currentReviews = $('.review');
+  // Removeing review
+  function removeReview(e) {
+    var thisReviewObj = getReviewData.call(this, e),
+        $currentReviews = thisReviewObj.currentReviews,
+        $thisReview = thisReviewObj.thisReview,
+        index = thisReviewObj.index;
     reviews.splice(index, 1);
     $currentReviews.eq(index).remove();
   }
 
   // Checking if review containes words from blacklistWords array and generating markup (+ checking if the review is valid)
   function getFilteredText(revIndex) {
-    var isReviewValid = true;
-    var text = reviews[revIndex].text.match(/[\s\W+)(]|[^\s\W+)(]+/g).reduce(function(htmlArr, word){
+    var isReviewValid = true,
+        text = reviews[revIndex].text.match(/[\s\W+)(]|[^\s\W+)(]+/g).reduce(function(htmlArr, word){
       var cleanWord = word.toLowerCase();
       if (blacklistWords.indexOf(cleanWord) !== -1) {
         isReviewValid = false;
@@ -147,10 +114,10 @@ var App = (function($){
 
   // Rendering the filtered version of review and adding isvalid css class to it
   function checkReview(e) {
-    var $currentReviews = $('.review'),
-        index = (arguments.length === 0 || e.type === 'click') ? $(this).closest($currentReviews).index() : e,
+    var thisReviewObj = getReviewData.call(this, e),
+        $thisReview = thisReviewObj.thisReview,
+        index = thisReviewObj.index,
         newHtml = getFilteredText(index),
-        $thisReview = $currentReviews.eq(index),
         isValidClass = (reviews[index].valid === true) ? 'review--valid' : 'review--invalid';
     $thisReview
       .find('.review__text')
@@ -158,6 +125,27 @@ var App = (function($){
       .end()
       .removeClass('review--valid review--invalid')
       .addClass(isValidClass);
+  }
+
+  // Editing a review
+  function editReview(e) {
+    var thisReviewObj = getReviewData.call(this, e),
+        $thisReview = thisReviewObj.thisReview,
+        index = thisReviewObj.index,
+        $thisReviewText = $thisReview.find('.review__text');
+    $thisReviewText.replaceWith($('<textarea/>').append(reviews[index].text));
+  }
+  
+  // Retrieving data about review (DOM reference, index, all current reviews)
+  function getReviewData(e) {
+    var $currentReviews = $('.review'),
+        index = (arguments.length === 0 || e.type === 'click') ? $(this).closest('.review').index() : e,
+        $thisReview = $currentReviews.eq(index);
+    return {
+      currentReviews: $currentReviews,
+      thisReview: $thisReview,
+      index: index
+    };
   }
 
   // Checking all reviews
@@ -169,10 +157,15 @@ var App = (function($){
 
   // Attaching event handlers
   $addWordBtn.on('click', addWord);
-  $reviewsContainer.on('click', '.review__check', checkReview);
-
+  $addReviewBtn.on('click', addReview);
+  $checkAllRevBtn.on('click', checkAllReviews);
+  $reviewsContainer.on('click', '.review__check', checkReview)
+                   .on('click', '.review__edit', editReview)
+                   .on('click', '.review__remove', removeReview);
+  
   // handler for removing a word with animation 
   $blacklistContainer
+  // on animation end adding/removing appropriate class
   .on('webkitAnimationEnd oanimationend oAnimationEnd msAnimationEnd animationend', '.blacklist__word', function(){
     var $word = $(this);
     if ($word.hasClass('zoomIn')) {

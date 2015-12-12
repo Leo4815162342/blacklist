@@ -9,13 +9,24 @@
 </head>
 <body>
   <div class="container">
-    <h3 class="title">Blacklisted Words</h3>
+    <section class="blacklistN">
+      <header class="section-header">
+        <h3>Blacklisted Words</h3>
+        <button class="blacklist__add-word">add new word</button>
+      </header>
+    </section>
     <div class="blacklist">
       <div class="blacklist__words"></div>
-      <button class="blacklist__add-word">Add Word</button>
     </div>
-    <h3 class="title">Reviews</h3>
-    <div class="reviews"></div>
+    <section class="reviews">
+      <header class="section-header">
+        <h3>Reviews</h3>
+        <button class="reviews__check-all">check all reviews</button>
+        <button class="reviews__add">add new review</button>
+      </header>
+      <div class="reviews__list"></div>
+    </section>
+    
   </div>
   
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
