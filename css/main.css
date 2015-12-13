@@ -229,6 +229,10 @@ th {
 	box-sizing: border-box;
 }
 
+html {
+	overflow-y: scroll;
+}
+
 body {
 	background-color: #485056;
 }
@@ -236,6 +240,7 @@ body {
 button {
 	font-size: 12px;
 	border: none;
+	border-radius: 5px;
 	background-color: #7e8286;
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -264,15 +269,12 @@ h3 {
 	margin-bottom: 10px;
 }
 
-.blacklist {
-	overflow: hidden;
-	border-radius: 5px;
-	background-color: #dcdcdc;
-}
-
 .blacklist__words {
 	min-height: 58px;
+	overflow: hidden;
 	padding: 10px;
+	border-radius: 5px;
+	background-color: #dcdcdc;
 }
 
 .blacklist__word {
@@ -381,12 +383,45 @@ h3 {
 }
 
 .review__actions {
-	background-color: #d1d1d1;
+	padding: 0 0 10px 20px;
+}
+
+.review__actions > button {
+	margin-left: 10px;
+}
+
+.review__actions > button:first-child {
+	margin-left: 0;
+}
+
+.review__edit {
+	color: #483110;
+	background-color: #ff9800;
+}
+
+.review__edit:after {
+	content: 'edit';
+}
+
+.review__save {
+	color: #335435;
+	background-color: #4caf50;
+}
+
+.review__save:after {
+	content: 'save';
 }
 
 .review__remove {
 	color: #ffd3d3;
 	background-color: tomato;
+}
+
+.review__textarea {
+	width: 100%;
+	padding: 20px;
+	outline: none;
+	border: none;
 }
 
 @-webkit-keyframes zoomIn {

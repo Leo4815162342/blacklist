@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 body {
   background-color: $bg-color;
 }
@@ -15,6 +19,7 @@ button {
   appearance: none;
   font-size: 12px;
   background-color: #7E8286;
+  border-radius: 5px;
   &:focus {
     outline: none;
   }
@@ -41,19 +46,12 @@ h3 {
 
 // Blacklist section
 
-.blacklist {
-  background-color: #DCDCDC;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.blacklist__add-word {
-
-}
-
 .blacklist__words {
   padding: 10px;
   min-height: 58px;
+  background-color: #DCDCDC;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .blacklist__word {
@@ -186,22 +184,50 @@ h3 {
 }
 
 .review__actions {
+  padding: 0 0 10px 20px;
   @extend %clearfix;
-  background-color: #D1D1D1;
+  > button {
+    margin-left: 10px;
+  }
+  > button:first-child {
+    margin-left: 0;
+  }
 }
 
 .review__check {
-  // display: block;
   // float: left;
 }
 
+.review__edit {
+  background-color: #FF9800;
+  color: #483110;
+  &:after {
+    content: 'edit'
+  }
+}
+
+.review__save {
+  background-color: #4CAF50;
+  color: #335435;
+  &:after {
+    content: 'save'
+  }
+}
+
 .review__remove {
-  // display: block;
   color: #FFD3D3;
   background-color: tomato;
   // float: left;
 }
 
-.review__edit {
-  
+.review__textarea {
+  width: 100%;
+  padding: 20px;
+  outline: none;
+  border: none;
+  // transition: all 0.3s ease-in-out;
+  // &:focus {
+  //   box-shadow: 0 0 5px #ff9800;
+  // }
 }
+

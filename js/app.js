@@ -10,10 +10,10 @@ var App = (function($){
       $reviewsContainer = $('.reviews__list');
 
   // Main vars
-  var blacklistWords = ['lorem', 'ipsum', 'test', 'fuck'],
+  var blacklistWords = ['fuck'],
       reviews = [
         {
-          text: 'Fucking! awesome a b c',
+          text: 'Fuck you Fucking FUCKer!',
           valid: null
         },
         {
@@ -37,7 +37,7 @@ var App = (function($){
 
   // HTML template for review block
   function reviewHtmlTpl(text) {
-    return '<div class="review"><p class="review__text">' + text + '</p><div class="review__actions"><button class="review__check">check</button><button class="review__edit">edit</button><button class="review__remove">remove</button></div></div>';
+    return '<div class="review"><p class="review__text">' + text + '</p><div class="review__actions"><button class="review__check">check</button><button class="review__edit"></button><button class="review__remove">delete</button></div></div>';
   }
 
   // HTML template for filtered word
@@ -69,12 +69,22 @@ var App = (function($){
   }
 
   // Removing word from the blacklist and DOM
-  function removeWord(arg) {
-    var index = (typeof arg === 'number') ? arg : blacklistWords.indexOf(arg),
-        $currentWords = $('.blacklist__word');
+  function removeWord(e) {
+    var $currentWords = $('.blacklist__word'),
+        index = (arguments.length === 0 || e.type === 'click') ? $(this).closest('.blacklist__word').index() : (typeof e === 'number') ? e : blacklistWords.indexOf(e);
     if (index !== -1) {
       blacklistWords.splice(index, 1);
       $currentWords.eq(index).addClass('zoomOut');
+    }
+  }
+
+  // Handling animation of blacklist words
+  function handleWordAnimaton() {
+    var $word = $(this);
+    if ($word.hasClass('zoomIn')) {
+      $word.removeClass('zoomIn');
+    } else {
+      $word.remove();
     }
   }
 
@@ -108,15 +118,15 @@ var App = (function($){
         isReviewValid = false;
         htmlArr.push(filteredWordTpl(word));
       } else {
-        var flag = true;
+        var isPartOfWordValid = true;
         for (var i = 0, n = blacklistWords.length; i < n; i++) {
           if (cleanWord.indexOf(blacklistWords[i]) !== -1) {
             isReviewValid = false;
-            flag = false;
+            isPartOfWordValid = false;
             htmlArr.push(filteredWordTpl(word));
           }
         }
-        if (flag) {
+        if (isPartOfWordValid) {
           htmlArr.push(word);
         }
       }
@@ -130,24 +140,35 @@ var App = (function($){
   function checkReview(e) {
     var thisReviewObj = getReviewData.call(this, e),
         $thisReview = thisReviewObj.thisReview,
+        $thisReviewText = $thisReview.find('.review__text'),
         index = thisReviewObj.index,
+        curHtml = $thisReviewText.html(),
         newHtml = getFilteredText(index),
         isValidClass = (reviews[index].valid === true) ? 'review--valid' : 'review--invalid';
-    $thisReview
-      .find('.review__text')
-        .html(newHtml)
-      .end()
-      .removeClass('review--valid review--invalid')
-      .addClass(isValidClass);
+    if (curHtml !== newHtml) {
+      $thisReviewText.html(newHtml);
+    }
+    $thisReview.removeClass('review--valid review--invalid').addClass(isValidClass);
   }
 
   // Editing a review
   function editReview(e) {
-    var thisReviewObj = getReviewData.call(this, e),
+    var $editBtn = $(this),
+        thisReviewObj = getReviewData.call(this, e),
         $thisReview = thisReviewObj.thisReview,
         index = thisReviewObj.index,
-        $thisReviewText = $thisReview.find('.review__text');
-    $thisReviewText.replaceWith($('<textarea/>').append(reviews[index].text));
+        $thisReviewText = $thisReview.find('.review__text'),
+        reviewIsEdited = $thisReview.hasClass('review__is-being-edited');
+    if (!reviewIsEdited) {
+      $editBtn.addClass('review__save');
+      $thisReview.addClass('review__is-being-edited');
+      $thisReviewText.replaceWith($('<textarea class="review__textarea"/>').append(reviews[index].text));
+    } else {
+      $editBtn.removeClass('review__save');
+      $thisReview.removeClass('review__is-being-edited');
+    }
+    
+    
   }
 
   // Retrieving data about review (DOM reference, index, all current reviews)
@@ -176,27 +197,13 @@ var App = (function($){
   $reviewsContainer.on('click', '.review__check', checkReview)
                    .on('click', '.review__edit', editReview)
                    .on('click', '.review__remove', removeReview);
-  
-  // handler for removing a word with animation 
-  $blacklistContainer
-  // on animation end adding/removing appropriate class
-  .on('webkitAnimationEnd oanimationend oAnimationEnd msAnimationEnd animationend', '.blacklist__word', function(){
-    var $word = $(this);
-    if ($word.hasClass('zoomIn')) {
-      $word.removeClass('zoomIn');
-    } else {
-      $word.remove();
-    }
-  })
-  .on('click', '.blacklist__remove-icon', function(){
-    var index = $(this).parent('.blacklist__word').index();
-    removeWord(index);
-  });
+  $blacklistContainer.on('click', '.blacklist__remove-icon', removeWord)
+  .on('webkitAnimationEnd oanimationend oAnimationEnd msAnimationEnd animationend', '.blacklist__word', handleWordAnimaton);
 
   // Public API
   var publicApi = {
-    addWord: addWord,
-    removeWord: removeWord,
+    addWord: addWord,                    // App.addWord('test')
+    removeWord: removeWord,              // App.removeWord('test') , App.removeWord(0)
     addReview: addReview,
     editReview: editReview,
     checkReview: checkReview,
