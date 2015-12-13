@@ -13,6 +13,10 @@ var App = (function($){
   var blacklistWords = ['lorem', 'ipsum', 'test', 'fuck'],
       reviews = [
         {
+          text: 'Fucking! awesome a b c',
+          valid: null
+        },
+        {
           text: 'Lorem, test ad asd? Asd ddddd, ss: and dolor ipsum $100 USD!',
           valid: null
         },
@@ -95,7 +99,7 @@ var App = (function($){
     $currentReviews.eq(index).remove();
   }
 
-  // Checking if review containes words from blacklistWords array and generating markup (+ checking if the review is valid)
+  // Splitting review into units. Checking if review containes words from blacklistWords array and generating markup (+ checking if the review is valid)
   function getFilteredText(revIndex) {
     var isReviewValid = true,
         text = reviews[revIndex].text.match(/[\s\W+)(]|[^\s\W+)(]+/g).reduce(function(htmlArr, word){
@@ -104,7 +108,17 @@ var App = (function($){
         isReviewValid = false;
         htmlArr.push(filteredWordTpl(word));
       } else {
-        htmlArr.push(word);
+        var flag = true;
+        for (var i = 0, n = blacklistWords.length; i < n; i++) {
+          if (cleanWord.indexOf(blacklistWords[i]) !== -1) {
+            isReviewValid = false;
+            flag = false;
+            htmlArr.push(filteredWordTpl(word));
+          }
+        }
+        if (flag) {
+          htmlArr.push(word);
+        }
       }
       return htmlArr;
     }, []);
@@ -135,7 +149,7 @@ var App = (function($){
         $thisReviewText = $thisReview.find('.review__text');
     $thisReviewText.replaceWith($('<textarea/>').append(reviews[index].text));
   }
-  
+
   // Retrieving data about review (DOM reference, index, all current reviews)
   function getReviewData(e) {
     var $currentReviews = $('.review'),
@@ -184,8 +198,9 @@ var App = (function($){
     addWord: addWord,
     removeWord: removeWord,
     addReview: addReview,
-    removeReview: removeReview,
+    editReview: editReview,
     checkReview: checkReview,
+    removeReview: removeReview,
     checkAllReviews: checkAllReviews
   };
 
