@@ -66,6 +66,7 @@ var App = (function($){
       blacklistWords.push(word);
       renderElems(word, wordHtmlTpl, $blacklistContainer);
     }
+    checkAllReviews();
   }
 
   // Removing word from the blacklist and DOM
@@ -76,6 +77,7 @@ var App = (function($){
       blacklistWords.splice(index, 1);
       $currentWords.eq(index).addClass('zoomOut');
     }
+    checkAllReviews();
   }
 
   // Handling animation of blacklist words
@@ -158,14 +160,18 @@ var App = (function($){
         $thisReview = thisReviewObj.thisReview,
         index = thisReviewObj.index,
         $thisReviewText = $thisReview.find('.review__text'),
-        reviewIsEdited = $thisReview.hasClass('review__is-being-edited');
+        reviewIsEdited = $thisReview.hasClass('review--is-being-edited');
     if (!reviewIsEdited) {
       $editBtn.addClass('review__save');
-      $thisReview.addClass('review__is-being-edited');
+      $thisReview.addClass('review--is-being-edited');
       $thisReviewText.replaceWith($('<textarea class="review__textarea"/>').append(reviews[index].text));
     } else {
       $editBtn.removeClass('review__save');
-      $thisReview.removeClass('review__is-being-edited');
+      $thisReview.removeClass('review--is-being-edited');
+      var newText = $thisReview.find('.review__textarea').val();
+      reviews[index].text = newText;
+      $thisReview.find('.review__textarea').replaceWith($('<p class="review__text">' + newText + '</p>'));
+      checkReview(index);
     }
     
     
