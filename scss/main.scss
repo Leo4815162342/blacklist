@@ -31,8 +31,9 @@ h3 {
 }
 
 .container {
-  width: 960px;
+  max-width: 960px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
 // // General section header
@@ -178,6 +179,12 @@ h3 {
   padding: 20px;
 }
 
+.review__text--is-being-edited {
+  border-radius: 5px;
+  outline: none;
+  background-color: #fff;
+}
+
 .review__filtered-word {
   color: #fff;
   background-color: tomato;
@@ -217,17 +224,6 @@ h3 {
 .review__remove {
   color: #FFD3D3;
   background-color: tomato;
-  // float: left;
 }
 
-.review__textarea {
-  width: 100%;
-  padding: 20px;
-  outline: none;
-  border: none;
-  // transition: all 0.3s ease-in-out;
-  // &:focus {
-  //   box-shadow: 0 0 5px #ff9800;
-  // }
-}
 

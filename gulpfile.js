@@ -1,15 +1,16 @@
 var gulp = require('gulp'),
-	sass = require('gulp-sass'),
-  csscomb = require('gulp-csscomb'),
-	autoprefixer = require('gulp-autoprefixer'),
-  connect = require('gulp-connect'),
-  cmq = require('gulp-combine-media-queries');
- 
+    sass = require('gulp-sass'),
+    csscomb = require('gulp-csscomb'),
+    autoprefixer = require('gulp-autoprefixer'),
+    connect = require('gulp-connect'),
+    combineMq = require('gulp-combine-mq'),
+    babel = require('gulp-babel');
+
 gulp.task('styles', function () {
   gulp.src('./scss/main.scss')
     .pipe(sass({
       includePaths: ['./scss'],
-      outputStyle: 'compressed' //'expanded' for non-compressed version
+      outputStyle: 'compressed' // 'expanded' for non-compressed version;
     }))
     .pipe(autoprefixer({
             browsers: [
@@ -24,19 +25,26 @@ gulp.task('styles', function () {
             cascade: false
         }))
     .pipe(csscomb())
-    .pipe(cmq({
-      log: true
+    .pipe(combineMq({
+      beautify: true
     }))
     .pipe(gulp.dest('css/'));
 });
 
+gulp.task('babel', function () {
+  return gulp.src('js/app.js')
+    .pipe(babel())
+    .pipe(gulp.dest('js/compiled'));
+});
+
 gulp.task('watch', function () {
   gulp.watch('./scss/**/*.scss', ['styles']);
+  gulp.watch('./js/app.js', ['babel']);
 });
 
 gulp.task('connect', function() {
   connect.server();
 });
 
-gulp.task('default', ['connect','watch']);
+gulp.task('default', ['connect', 'watch']);
 
